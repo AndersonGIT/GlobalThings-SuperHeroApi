@@ -14,6 +14,7 @@ namespace SuperHeroApi.Controllers
     public class CategoriaController : ApiController
     {
         // GET api/<controller>
+        [HttpGet]
         public IEnumerable<Categoria> Get()
         {
             List<Categoria> categorias = new CategoriaService().ListarCategorias();
@@ -22,6 +23,7 @@ namespace SuperHeroApi.Controllers
         }
 
         // GET api/<controller>/5
+        [HttpGet]
         public IHttpActionResult Get(int id)
         {
             Categoria categoria = new CategoriaService().ConsultarCategoria(id);
@@ -32,6 +34,7 @@ namespace SuperHeroApi.Controllers
         }
 
         // POST api/<controller>
+        [HttpPost]
         public IHttpActionResult Post([FromBody] Categoria categoria)
         {
             long idHCategoriaCriada = new CategoriaService().CadastrarCategoria(categoria);
@@ -54,13 +57,47 @@ namespace SuperHeroApi.Controllers
         }
 
         // PUT api/<controller>/5
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public IHttpActionResult Put([FromBody] Categoria categoria)
         {
+            try
+            {
+                Categoria categoriaAtualizada = null;
+                string validacaoCategoria = categoria.ValidarCategoria(Objetos.Enums.RotinaEmExecucao.Alteracao);
+                if (string.IsNullOrWhiteSpace(validacaoCategoria))
+                {
+                    categoriaAtualizada = new CategoriaService().AlterarCategoria(categoria);
+                }
+
+                if (categoriaAtualizada != null)
+                {
+                    return Ok(categoriaAtualizada);
+                }
+                else
+                {
+                    return BadRequest(validacaoCategoria);
+                }
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         // DELETE api/<controller>/5
-        public void Delete(int id)
+        [HttpDelete]
+        public IHttpActionResult Delete(long idCategoria)
         {
+            try
+            {
+                new CategoriaService().RemoverCategoria(idCategoria);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }

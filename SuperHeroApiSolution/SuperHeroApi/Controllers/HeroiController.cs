@@ -13,6 +13,7 @@ namespace SuperHeroApi.Controllers
     public class HeroiController : ApiController
     {
         // GET api/values
+        [HttpGet]
         public IEnumerable<Heroi> Get()
         {
             List<Heroi> herois = new HeroiService().ListarHerois();
@@ -20,6 +21,7 @@ namespace SuperHeroApi.Controllers
         }
 
         // GET api/values/5
+        [HttpGet]
         public Heroi Get(int id)
         {
             Heroi heroi = new HeroiService().ConsultarHeroi(id);
@@ -27,6 +29,7 @@ namespace SuperHeroApi.Controllers
         }
 
         // POST api/values
+        [HttpPost]
         public IHttpActionResult Post([FromBody] Heroi heroi)
         {
             long idHeroiCriado = new HeroiService().CadastrarHeroi(heroi);
@@ -49,28 +52,47 @@ namespace SuperHeroApi.Controllers
         }
 
         // PUT api/values/5
+        [HttpPut]
         public IHttpActionResult Put([FromBody] Heroi heroi)
         {
-            Heroi heroiAtualizado = null;
-            string validacaoHeroi = heroi.ValidarHeroi(Objetos.Enums.RotinaEmExecucao.Alteracao);
-            if (string.IsNullOrWhiteSpace(validacaoHeroi))
+            try
             {
-                heroiAtualizado = new HeroiService().AlterarHeroi(heroi);                 
-            }
+                Heroi heroiAtualizado = null;
+                string validacaoHeroi = heroi.ValidarHeroi(Objetos.Enums.RotinaEmExecucao.Alteracao);
+                if (string.IsNullOrWhiteSpace(validacaoHeroi))
+                {
+                    heroiAtualizado = new HeroiService().AlterarHeroi(heroi);
+                }
 
-            if(heroiAtualizado != null)
+                if (heroiAtualizado != null)
+                {
+                    return Ok(heroiAtualizado);
+                }
+                else
+                {
+                    return BadRequest(validacaoHeroi);
+                }
+
+            }catch(Exception exception)
             {
-                return Ok(heroiAtualizado);
+                return BadRequest(exception.Message);
             }
-            else
-            {
-                return BadRequest(validacaoHeroi);
-            }             
         }
 
         // DELETE api/values/5
-        public void Delete(int id)
+        [HttpDelete]
+        public IHttpActionResult Delete(long idHeroi)
         {
+            try
+            {                
+                new HeroiService().RemoverHeroi(idHeroi);
+
+                return Ok();
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
     }
 }

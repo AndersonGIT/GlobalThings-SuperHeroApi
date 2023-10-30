@@ -87,7 +87,7 @@ namespace DataLib
             }
             catch (Exception exception)
             {
-                throw new Exception("Erro ao executar command: Execute command.");
+                throw new Exception("Erro ao executar command: Execute command. Exception: " + exception.Message);
             }
             finally
             {

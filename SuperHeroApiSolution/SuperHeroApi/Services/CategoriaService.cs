@@ -15,12 +15,47 @@ namespace SuperHeroApi.Services
     {
         public Categoria AlterarCategoria(Categoria categoria)
         {
-            throw new NotImplementedException();
+            Categoria categoriaRetorno = null;
+            try
+            {
+                GenericDatabase.ExecuteCommand(String.Format("UPDATE CATEGORIAS SET (NOME = '{0}') WHERE ID = {1}", categoria.Nome), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteNonQuery);
+                categoriaRetorno = this.ConsultarCategoria(categoria.Id);
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Ocorreu um erro ao alterar a categoria. Exception: " + exception.Message);
+            }
+            return categoriaRetorno;
         }
 
         public long CadastrarCategoria(Categoria categoria)
         {
-            throw new NotImplementedException();
+            long idendityRegistrado = -1;
+
+            try
+            {
+                Categoria categoriaExistente = ProcurarCategoriaPorNome(categoria.Nome);
+
+                if (categoriaExistente == null)
+                {
+                    var idCategoriaCadastrada = GenericDatabase.ExecuteCommand(String.Format("INSERT INTO CATEGORIAS (NOME) VALUES ('{0}') SELECT @@IDENTITY", categoria.Nome), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteScalar);
+
+                    if (idCategoriaCadastrada != null)
+                    {
+                        idendityRegistrado = Convert.ToInt64(idCategoriaCadastrada);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Já existe uma categoria com este nome. Exception: ");
+                }
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Ocorreu um erro ao cadastrar a categoria. Exception: " + exception.Message);
+            }
+            
+            return idendityRegistrado;
         }
 
         public Categoria ConsultarCategoria(long idCategoria)
@@ -30,11 +65,14 @@ namespace SuperHeroApi.Services
 
             if (categoriasDataResult != null)
             {
-                categoria = new Categoria
+                if (categoriasDataResult.Rows.Count > 0)
                 {
-                    Id = Convert.ToInt64(categoriasDataResult.Rows[0]["ID"]),
-                    Nome = categoriasDataResult.Rows[0]["NOME"].ToString()
-                };
+                    categoria = new Categoria
+                    {
+                        Id = Convert.ToInt64(categoriasDataResult.Rows[0]["ID"]),
+                        Nome = categoriasDataResult.Rows[0]["NOME"].ToString()
+                    };
+                }
             }
 
             return categoria;
@@ -43,17 +81,20 @@ namespace SuperHeroApi.Services
         public List<Categoria> ListarCategorias()
         {
             List<Categoria> categorias = new List<Categoria>();
-            var categoriasDataResult = (DataTable)GenericDatabase.ExecuteCommand("Select * FROM Categorias", System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
+            var categoriasDataResult = (DataTable)GenericDatabase.ExecuteCommand("Select * FROM Categorias", CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
 
             if(categoriasDataResult != null)
             {
-                foreach (DataRow categoriaRow in categoriasDataResult.Rows)
+                if (categoriasDataResult.Rows.Count > 0)
                 {
-                    categorias.Add(new Categoria
+                    foreach (DataRow categoriaRow in categoriasDataResult.Rows)
                     {
-                        Id = Convert.ToInt64(categoriaRow["ID"]),
-                        Nome = categoriaRow["NOME"].ToString()
-                    });
+                        categorias.Add(new Categoria
+                        {
+                            Id = Convert.ToInt64(categoriaRow["ID"]),
+                            Nome = categoriaRow["NOME"].ToString()
+                        });
+                    }
                 }
             }
 
@@ -62,7 +103,35 @@ namespace SuperHeroApi.Services
 
         public bool RemoverCategoria(long idCategoria)
         {
-            throw new NotImplementedException();
+            try
+            {
+                GenericDatabase.ExecuteCommand(String.Format("DELETE FROM CATEGORIAS WHERE ID = {0}", idCategoria), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteNonQuery);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Problemas ao deletar categoria. Exception: " + exception.Message);
+            }
+        }
+
+        private Categoria ProcurarCategoriaPorNome(string nomeCategoria)
+        {
+            Categoria categoria = null;
+            var categoriasDataResult = (DataTable)GenericDatabase.ExecuteCommand(String.Format("Select ID, NOME FROM Categorias WHERE NOME = '{0}'", nomeCategoria), System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
+
+            if (categoriasDataResult != null)
+            {
+                if(categoriasDataResult.Rows.Count > 0)
+                {
+                    categoria = new Categoria
+                    {
+                        Id = Convert.ToInt64(categoriasDataResult.Rows[0]["ID"]),
+                        Nome = categoriasDataResult.Rows[0]["NOME"].ToString()
+                    };
+                }
+            }
+
+            return categoria;
         }
     }
 }
