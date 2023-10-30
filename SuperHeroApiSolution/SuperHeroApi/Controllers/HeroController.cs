@@ -1,4 +1,6 @@
 ﻿using DataLib;
+using SuperHeroApi.Models;
+using SuperHeroApi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +13,10 @@ namespace SuperHeroApi.Controllers
     public class HeroController : ApiController
     {
         // GET api/values
-        public IEnumerable<string> Get()
+        public IEnumerable<Heroi> Get()
         {
-            Object objectValue = GenericDatabase.ExecuteCommand("Select * FROM Herois", System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
-
-            return new string[] { "value1", "value2" };
+            List<Heroi> herois = new HeroiService().ListarHerois();
+            return herois;
         }
 
         // GET api/values/5

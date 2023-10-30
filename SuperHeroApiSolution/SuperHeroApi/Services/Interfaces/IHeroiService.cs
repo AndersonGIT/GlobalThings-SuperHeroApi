@@ -9,7 +9,7 @@ namespace SuperHeroApi.Services.Interfaces
     internal interface IHeroiService
     {
         List<Heroi> ListarHerois();
-        List<Heroi> ListarHeroisPorCategoria(Categoria categoria);
+        List<Heroi> ListarHeroisPorCategoria(long idCategoria);
         Heroi ConsultarHeroi(long idHeroi);
         Heroi AlterarCategoria(Heroi heroi);
         long CadastrarHeroi(Heroi heroi);

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SuperHeroApi.Models;
+using SuperHeroApi.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,9 +12,11 @@ namespace SuperHeroApi.Controllers
     public class CategoriaController : ApiController
     {
         // GET api/<controller>
-        public IEnumerable<string> Get()
+        public IEnumerable<Categoria> Get()
         {
-            return new string[] { "value1", "value2" };
+            List<Categoria> categorias = new CategoriaService().ListarCategorias();
+
+            return categorias;
         }
 
         // GET api/<controller>/5

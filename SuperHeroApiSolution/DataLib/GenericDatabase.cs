@@ -54,25 +54,35 @@ namespace DataLib
             {
                 command.Connection.Open();
 
-                switch (executionType)
+                if(command.Connection.State == ConnectionState.Open)
                 {
-                    case ExecutionType.ExecuteNonQuery:
-                        objectReturn = command.ExecuteNonQuery();
-                        break;
-                    case ExecutionType.ExecuteReader:
-                        objectReturn = command.ExecuteReader();
-                        break;
-                    case ExecutionType.ExecuteScalar:
-                        objectReturn = command.ExecuteScalar();
-                        break;
-                    case ExecutionType.ExecuteDataTable:
-                        var table = new DataTable();
-                        var reader = command.ExecuteReader();
-                        table.Load(reader);
-                        reader.Close();
+                    switch (executionType)
+                    {
+                        case ExecutionType.ExecuteNonQuery:
+                            objectReturn = command.ExecuteNonQuery();
+                            break;
+                        case ExecutionType.ExecuteReader:
+                            objectReturn = command.ExecuteReader();
+                            break;
+                        case ExecutionType.ExecuteScalar:
+                            objectReturn = command.ExecuteScalar();
+                            break;
+                        case ExecutionType.ExecuteDataTable:
+                            var table = new DataTable();
+                            var reader = command.ExecuteReader();
+                            if (reader.HasRows)
+                            {
+                                table.Load(reader);                                
+                            }
+                            reader.Close();
 
-                        objectReturn = table;
-                        break;
+                            objectReturn = table;
+                            break;
+                    }
+                }
+                else
+                {
+                    throw new Exception("Problema na consulta ao banco de dados, conexão não estabelecida.");
                 }
             }
             catch (Exception exception)
