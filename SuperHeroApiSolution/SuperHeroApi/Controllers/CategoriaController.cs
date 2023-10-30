@@ -1,7 +1,9 @@
-﻿using SuperHeroApi.Models;
+﻿using DataLib;
+using SuperHeroApi.Models;
 using SuperHeroApi.Services;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -20,14 +22,35 @@ namespace SuperHeroApi.Controllers
         }
 
         // GET api/<controller>/5
-        public string Get(int id)
+        public IHttpActionResult Get(int id)
         {
-            return "value";
+            Categoria categoria = new CategoriaService().ConsultarCategoria(id);
+            if (categoria != null)
+                return Ok(categoria);
+            else
+                return NotFound();
         }
 
         // POST api/<controller>
-        public void Post([FromBody] string value)
+        public IHttpActionResult Post([FromBody] Categoria categoria)
         {
+            long idHCategoriaCriada = new CategoriaService().CadastrarCategoria(categoria);
+            string validacaoCategoria = categoria.ValidarCategoria(Objetos.Enums.RotinaEmExecucao.Cadastro);
+            if (string.IsNullOrWhiteSpace(validacaoCategoria))
+            {
+                if (idHCategoriaCriada > 0)
+                {
+                    return Ok(idHCategoriaCriada);
+                }
+                else
+                {
+                    return BadRequest("Herói não criado");
+                }
+            }
+            else
+            {
+                return BadRequest(validacaoCategoria);
+            }
         }
 
         // PUT api/<controller>/5

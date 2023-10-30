@@ -11,20 +11,25 @@ namespace SuperHeroApi.Services
 {
     public class HeroiService : IHeroiService
     {
-        public Heroi AlterarCategoria(Heroi heroi)
+        public Heroi AlterarHeroi(Heroi heroi)
         {
-            throw new NotImplementedException();
+            GenericDatabase.ExecuteCommand(String.Format("UPDATE HEROIS SET (NOME = '{0}', ID_CATEGORIA = {1}) WHERE ID = {3}", heroi.Nome, heroi.IdCategoria, heroi.Id), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteNonQuery);
+            Heroi heroiRetorno = this.ConsultarHeroi(heroi.Id);
+            return heroiRetorno;
         }
 
+        //Descobrir motivo pelo não retorno da inserção
         public long CadastrarHeroi(Heroi heroi)
         {
-            throw new NotImplementedException();
+            var idHeroiCadastrado = (long)GenericDatabase.ExecuteCommand(String.Format("INSERT INTO HEROIS (NOME, ID_CATEGORIA) VALUES ('{0}', {1})", heroi.Nome, heroi.IdCategoria), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteScalar);
+
+            return idHeroiCadastrado;
         }
 
         public Heroi ConsultarHeroi(long idHeroi)
         {
             Heroi heroi = null;
-            var heroiDataResult = (DataTable)GenericDatabase.ExecuteCommand(String.Format("Select ID, NOME, ID_CATEGORIA FROM Herois WHERE ID = {0}", idHeroi), System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
+            var heroiDataResult = (DataTable)GenericDatabase.ExecuteCommand(String.Format("Select ID, NOME, ID_CATEGORIA FROM Herois WHERE ID = {0}", idHeroi), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
 
             if (heroiDataResult != null)
             {
@@ -42,7 +47,7 @@ namespace SuperHeroApi.Services
         public List<Heroi> ListarHerois()
         {
             List<Heroi> herois = null;
-            var heroisDataResult = (DataTable)GenericDatabase.ExecuteCommand("Select ID, NOME, ID_CATEGORIA FROM Herois", System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
+            var heroisDataResult = (DataTable)GenericDatabase.ExecuteCommand("Select ID, NOME, ID_CATEGORIA FROM Herois", CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
 
             if (heroisDataResult != null)
             {

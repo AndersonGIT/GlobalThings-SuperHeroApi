@@ -11,7 +11,7 @@ namespace SuperHeroApi.Services.Interfaces
         List<Heroi> ListarHerois();
         List<Heroi> ListarHeroisPorCategoria(long idCategoria);
         Heroi ConsultarHeroi(long idHeroi);
-        Heroi AlterarCategoria(Heroi heroi);
+        Heroi AlterarHeroi(Heroi heroi);
         long CadastrarHeroi(Heroi heroi);
         bool RemoverHeroi(long idHeroi);
     }
