@@ -1,5 +1,4 @@
-﻿using DataLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -8,33 +7,31 @@ using System.Web.Http;
 
 namespace SuperHeroApi.Controllers
 {
-    public class HeroControler : ApiController
+    public class CategoriaController : ApiController
     {
-        // GET api/values
+        // GET api/<controller>
         public IEnumerable<string> Get()
         {
-            Object objectValue = GenericDatabase.ExecuteCommand("Select * FROM Herois", System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
-
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/values/5
+        // GET api/<controller>/5
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/values
+        // POST api/<controller>
         public void Post([FromBody] string value)
         {
         }
 
-        // PUT api/values/5
+        // PUT api/<controller>/5
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/values/5
+        // DELETE api/<controller>/5
         public void Delete(int id)
         {
         }
