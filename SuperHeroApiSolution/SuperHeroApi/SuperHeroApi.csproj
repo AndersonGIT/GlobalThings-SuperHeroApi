@@ -172,6 +172,10 @@
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\Heroi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\CategoriaService.cs" />
+    <Compile Include="Services\HeroiService.cs" />
+    <Compile Include="Services\Interfaces\ICategoriaService.cs" />
+    <Compile Include="Services\Interfaces\IHeroiService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
