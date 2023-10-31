@@ -16,7 +16,7 @@ namespace SuperHeroApi.Services
             Heroi heroiRetorno = null;
             try
             {
-                GenericDatabase.ExecuteCommand(String.Format("UPDATE HEROIS SET (NOME = '{0}', ID_CATEGORIA = {1}) WHERE ID = {3}", heroi.Nome, heroi.IdCategoria, heroi.Id), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteNonQuery);
+                GenericDatabase.ExecuteCommand(String.Format("UPDATE HEROIS SET NOME = '{0}', ID_CATEGORIA = {1} WHERE ID = {2}", heroi.Nome, heroi.IdCategoria, heroi.Id), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteNonQuery);
                 heroiRetorno = this.ConsultarHeroi(heroi.Id);
             }
             catch (Exception exception)
@@ -148,12 +148,12 @@ namespace SuperHeroApi.Services
             }
         }
 
-        private Heroi ProcurarHeroiPorNome(string nomeHeroi)
+        public Heroi ProcurarHeroiPorNome(string nomeHeroi)
         {
             Heroi heroi = null;
             try
             {
-                var heroisDataResult = (DataTable)GenericDatabase.ExecuteCommand(String.Format("Select ID, NOME, ID_CATEGORIA FROM HEROIS WHERE NOME = {0}", nomeHeroi), System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
+                var heroisDataResult = (DataTable)GenericDatabase.ExecuteCommand(String.Format("Select ID, NOME, ID_CATEGORIA FROM HEROIS WHERE NOME = '{0}'", nomeHeroi), System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
 
                 if (heroisDataResult != null)
                 {

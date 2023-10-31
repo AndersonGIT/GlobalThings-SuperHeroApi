@@ -18,7 +18,7 @@ namespace SuperHeroApi.Services
             Categoria categoriaRetorno = null;
             try
             {
-                GenericDatabase.ExecuteCommand(String.Format("UPDATE CATEGORIAS SET (NOME = '{0}') WHERE ID = {1}", categoria.Nome), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteNonQuery);
+                GenericDatabase.ExecuteCommand(String.Format("UPDATE CATEGORIAS SET NOME = '{0}' WHERE ID = {1}", categoria.Nome, categoria.Id), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteNonQuery);
                 categoriaRetorno = this.ConsultarCategoria(categoria.Id);
             }
             catch (Exception exception)
@@ -118,7 +118,7 @@ namespace SuperHeroApi.Services
         {
             try
             {
-                var qtdResultadoConsulta = GenericDatabase.ExecuteCommand(String.Format("SELECT COUNT(ID) FROM CATEGORIAS WHERE ID = {0}", idCategoria), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteScalar);
+                var qtdResultadoConsulta = GenericDatabase.ExecuteCommand(String.Format("SELECT COUNT(ID) FROM HEROIS WHERE ID_CATEGORIA = {0}", idCategoria), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteScalar);
                 long valorQuantidade = -1;
                 if (qtdResultadoConsulta != null)
                 {
@@ -135,7 +135,7 @@ namespace SuperHeroApi.Services
             }
         }
 
-        private Categoria ProcurarCategoriaPorNome(string nomeCategoria)
+        public Categoria ProcurarCategoriaPorNome(string nomeCategoria)
         {
             Categoria categoria = null;
             var categoriasDataResult = (DataTable)GenericDatabase.ExecuteCommand(String.Format("Select ID, NOME FROM Categorias WHERE NOME = '{0}'", nomeCategoria), System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);

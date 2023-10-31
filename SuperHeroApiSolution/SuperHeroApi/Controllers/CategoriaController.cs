@@ -1,4 +1,5 @@
 ﻿using DataLib;
+using Microsoft.Ajax.Utilities;
 using SuperHeroApi.Models;
 using SuperHeroApi.Services;
 using System;
@@ -15,44 +16,77 @@ namespace SuperHeroApi.Controllers
     {
         // GET api/<controller>
         [HttpGet]
-        public IEnumerable<Categoria> Get()
+        public IHttpActionResult Get()
         {
-            List<Categoria> categorias = new CategoriaService().ListarCategorias();
-
-            return categorias;
+            try
+            {
+                List<Categoria> categorias = new CategoriaService().ListarCategorias();
+                if (categorias.Count > 0)
+                    return Ok(categorias);
+                else
+                    return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
         // GET api/<controller>/5
         [HttpGet]
         public IHttpActionResult Get(long idCategoria)
         {
-            Categoria categoria = new CategoriaService().ConsultarCategoria(idCategoria);
-            if (categoria != null)
-                return Ok(categoria);
-            else
-                return NotFound();
+            try
+            {
+                Categoria categoria = new CategoriaService().ConsultarCategoria(idCategoria);
+                if (categoria != null)
+                    return Ok(categoria);
+                else
+                    return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
 
         // POST api/<controller>
         [HttpPost]
         public IHttpActionResult Post([FromBody] Categoria categoria)
         {
-            long idHCategoriaCriada = new CategoriaService().CadastrarCategoria(categoria);
-            string validacaoCategoria = categoria.ValidarCategoria(Objetos.Enums.RotinaEmExecucao.Cadastro);
-            if (string.IsNullOrWhiteSpace(validacaoCategoria))
+            try
             {
-                if (idHCategoriaCriada > 0)
+                string validacaoCategoria = categoria.ValidarCategoria(Objetos.Enums.RotinaEmExecucao.Cadastro);
+                if (string.IsNullOrWhiteSpace(validacaoCategoria))
                 {
-                    return Ok(idHCategoriaCriada);
+                    CategoriaService categoriaService = new CategoriaService();
+                    Categoria categoriaPorNome = categoriaService.ProcurarCategoriaPorNome(categoria.Nome);
+                    if (categoriaPorNome == null)
+                    {
+                        long idHCategoriaCriada = categoriaService.CadastrarCategoria(categoria);
+
+                        if (idHCategoriaCriada > 0)
+                        {
+                            return Ok(idHCategoriaCriada);
+                        }
+                        else
+                        {
+                            return BadRequest("Categoria não criado");
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest("Categoria já existe.");
+                    }
                 }
                 else
                 {
-                    return BadRequest("Herói não criado");
+                    return BadRequest(validacaoCategoria);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest(validacaoCategoria);
+                return InternalServerError(ex);
             }
         }
 
@@ -90,8 +124,9 @@ namespace SuperHeroApi.Controllers
         {
             try
             {
-                CategoriaService categoriaService= new CategoriaService();
-                if(!categoriaService.ExisteHeroiAssociadoNaCategoria(idCategoria)) { 
+                CategoriaService categoriaService = new CategoriaService();
+                if (!categoriaService.ExisteHeroiAssociadoNaCategoria(idCategoria))
+                {
                     categoriaService.RemoverCategoria(idCategoria);
                     return Ok();
                 }

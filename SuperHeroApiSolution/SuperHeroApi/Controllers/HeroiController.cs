@@ -64,22 +64,39 @@ namespace SuperHeroApi.Controllers
         [HttpPost]
         public IHttpActionResult Post([FromBody] Heroi heroi)
         {
-            long idHeroiCriado = new HeroiService().CadastrarHeroi(heroi);
-            string validacaoHeroi = heroi.ValidarHeroi(Objetos.Enums.RotinaEmExecucao.Cadastro);
-            if (string.IsNullOrWhiteSpace(validacaoHeroi))
+            try
             {
-                if (idHeroiCriado > 0)
+                HeroiService heroiService = new HeroiService();
+                
+                Heroi heroiExistentePeloNome = heroiService.ProcurarHeroiPorNome(heroi.Nome);
+                if(heroiExistentePeloNome == null)
                 {
-                    return Ok(idHeroiCriado);
+                    string validacaoHeroi = heroi.ValidarHeroi(Objetos.Enums.RotinaEmExecucao.Cadastro);
+                    if (string.IsNullOrWhiteSpace(validacaoHeroi))
+                    {
+                        long idHeroiCriado = heroiService.CadastrarHeroi(heroi);
+
+                        if (idHeroiCriado > 0)
+                        {
+                            return Ok(idHeroiCriado);
+                        }
+                        else
+                        {
+                            return BadRequest("Herói não criado");
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest(validacaoHeroi);
+                    }
                 }
                 else
                 {
-                    return BadRequest("Herói não criado");
+                    return BadRequest("Já existe um herói com este nome");
                 }
             }
-            else
-            {
-                return BadRequest(validacaoHeroi);
+            catch (Exception exception) {
+                return InternalServerError(exception);
             }
         }
 
