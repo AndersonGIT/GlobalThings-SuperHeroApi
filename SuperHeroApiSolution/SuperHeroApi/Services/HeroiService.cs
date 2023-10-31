@@ -51,16 +51,20 @@ namespace SuperHeroApi.Services
             Heroi heroi = null;
             try
             {
-                var heroiDataResult = (DataTable)GenericDatabase.ExecuteCommand(String.Format("Select ID, NOME, ID_CATEGORIA FROM Herois WHERE ID = {0}", idHeroi), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
+                var heroiDataResult = (DataTable)GenericDatabase.ExecuteCommand(String.Format("Select H.ID, H.NOME AS NOME_HEROI, H.ID_CATEGORIA, C.NOME AS NOME_CATEGORIA FROM Herois H INNER JOIN CATEGORIAS C ON C.ID = H.ID_CATEGORIA WHERE H.ID = {0}", idHeroi), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
 
                 if (heroiDataResult != null)
                 {
-                    heroi = new Heroi
+                    if(heroiDataResult.Rows.Count > 0)
                     {
-                        Id = Convert.ToInt64(heroiDataResult.Rows[0]["ID"]),
-                        Nome = heroiDataResult.Rows[0]["NOME"].ToString(),
-                        IdCategoria = Convert.ToInt64(heroiDataResult.Rows[0]["ID_CATEGORIA"])
-                    };
+                        heroi = new Heroi
+                        {
+                            Id = Convert.ToInt64(heroiDataResult.Rows[0]["ID"]),
+                            Nome = heroiDataResult.Rows[0]["NOME_HEROI"].ToString(),
+                            IdCategoria = Convert.ToInt64(heroiDataResult.Rows[0]["ID_CATEGORIA"]),
+                            NomeCategoria = heroiDataResult.Rows[0]["NOME_CATEGORIA"].ToString()
+                        };
+                    }                    
                 }
             }
             catch (Exception exception)
@@ -76,7 +80,7 @@ namespace SuperHeroApi.Services
             List<Heroi> herois = null;
             try
             {
-                var heroisDataResult = (DataTable)GenericDatabase.ExecuteCommand("Select ID, NOME, ID_CATEGORIA FROM Herois", CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
+                var heroisDataResult = (DataTable)GenericDatabase.ExecuteCommand("Select H.ID, H.NOME AS NOME_HEROI, H.ID_CATEGORIA, C.NOME AS NOME_CATEGORIA FROM Herois H INNER JOIN CATEGORIAS C ON C.ID = H.ID_CATEGORIA", CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
 
                 if (heroisDataResult != null)
                 {
@@ -86,8 +90,9 @@ namespace SuperHeroApi.Services
                         herois.Add(new Heroi
                         {
                             Id = Convert.ToInt64(categoriaRow["ID"]),
-                            Nome = categoriaRow["NOME"].ToString(),
-                            IdCategoria = Convert.ToInt64(categoriaRow["ID_CATEGORIA"])
+                            Nome = categoriaRow["NOME_HEROI"].ToString(),
+                            IdCategoria = Convert.ToInt64(categoriaRow["ID_CATEGORIA"]),
+                            NomeCategoria = categoriaRow["NOME_CATEGORIA"].ToString()
                         });
                     }
                 }
@@ -106,7 +111,7 @@ namespace SuperHeroApi.Services
 
             try
             {
-                var heroisDataResult = (DataTable)GenericDatabase.ExecuteCommand(string.Format("Select ID, NOME, ID_CATEGORIA FROM Herois WHERE ID_CATEGORIA = {0}", idCategoria), System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
+                var heroisDataResult = (DataTable)GenericDatabase.ExecuteCommand(string.Format("Select H.ID, H.NOME AS NOME-HEROI, H.ID_CATEGORIA, C.NOME AS NOME-CATEGORIA FROM Herois H INNER JOIN CATEGORIAS C ON C.ID = H.ID_CATEGORIA WHERE H.ID_CATEGORIA = {0}", idCategoria), System.Data.CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
 
                 if (heroisDataResult != null)
                 {
@@ -117,7 +122,8 @@ namespace SuperHeroApi.Services
                         {
                             Id = Convert.ToInt64(heroiRow["ID"]),
                             Nome = heroiRow["NOME"].ToString(),
-                            IdCategoria = Convert.ToInt64(heroiRow["ID_CATEGORIA"])
+                            IdCategoria = Convert.ToInt64(heroiRow["ID_CATEGORIA"]),
+
                         });
                     }
                 }

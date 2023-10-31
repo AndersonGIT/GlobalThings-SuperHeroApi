@@ -24,9 +24,9 @@ namespace SuperHeroApi.Controllers
 
         // GET api/<controller>/5
         [HttpGet]
-        public IHttpActionResult Get(int id)
+        public IHttpActionResult Get(long idCategoria)
         {
-            Categoria categoria = new CategoriaService().ConsultarCategoria(id);
+            Categoria categoria = new CategoriaService().ConsultarCategoria(idCategoria);
             if (categoria != null)
                 return Ok(categoria);
             else
@@ -90,9 +90,15 @@ namespace SuperHeroApi.Controllers
         {
             try
             {
-                new CategoriaService().RemoverCategoria(idCategoria);
-
-                return Ok();
+                CategoriaService categoriaService= new CategoriaService();
+                if(!categoriaService.ExisteHeroiAssociadoNaCategoria(idCategoria)) { 
+                    categoriaService.RemoverCategoria(idCategoria);
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest("Impossível remover categoria associada a um herói.");
+                }
             }
             catch (Exception exception)
             {

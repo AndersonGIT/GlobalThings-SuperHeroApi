@@ -54,7 +54,7 @@ namespace SuperHeroApi.Services
             {
                 throw new Exception("Ocorreu um erro ao cadastrar a categoria. Exception: " + exception.Message);
             }
-            
+
             return idendityRegistrado;
         }
 
@@ -83,7 +83,7 @@ namespace SuperHeroApi.Services
             List<Categoria> categorias = new List<Categoria>();
             var categoriasDataResult = (DataTable)GenericDatabase.ExecuteCommand("Select * FROM Categorias", CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteDataTable);
 
-            if(categoriasDataResult != null)
+            if (categoriasDataResult != null)
             {
                 if (categoriasDataResult.Rows.Count > 0)
                 {
@@ -114,6 +114,27 @@ namespace SuperHeroApi.Services
             }
         }
 
+        public bool ExisteHeroiAssociadoNaCategoria(long idCategoria)
+        {
+            try
+            {
+                var qtdResultadoConsulta = GenericDatabase.ExecuteCommand(String.Format("SELECT COUNT(ID) FROM CATEGORIAS WHERE ID = {0}", idCategoria), CommandType.Text, null, GenericDatabase.ExecutionType.ExecuteScalar);
+                long valorQuantidade = -1;
+                if (qtdResultadoConsulta != null)
+                {
+                    valorQuantidade = Convert.ToInt64(qtdResultadoConsulta);
+                }
+
+                if (valorQuantidade > 0)
+                    return true;
+                else return false;
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Problemas ao deletar categoria. Exception: " + exception.Message);
+            }
+        }
+
         private Categoria ProcurarCategoriaPorNome(string nomeCategoria)
         {
             Categoria categoria = null;
@@ -121,7 +142,7 @@ namespace SuperHeroApi.Services
 
             if (categoriasDataResult != null)
             {
-                if(categoriasDataResult.Rows.Count > 0)
+                if (categoriasDataResult.Rows.Count > 0)
                 {
                     categoria = new Categoria
                     {

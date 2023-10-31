@@ -14,18 +14,50 @@ namespace SuperHeroApi.Controllers
     {
         // GET api/values
         [HttpGet]
-        public IEnumerable<Heroi> Get()
+        public IHttpActionResult Get()
         {
-            List<Heroi> herois = new HeroiService().ListarHerois();
-            return herois;
+            List<Heroi> herois = null;
+            try
+            {
+                herois = new HeroiService().ListarHerois();
+                if(herois?.Count > 0)
+                {
+                    return Ok(herois);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         // GET api/values/5
         [HttpGet]
-        public Heroi Get(int id)
+        public IHttpActionResult Get(long idHeroi)
         {
-            Heroi heroi = new HeroiService().ConsultarHeroi(id);
-            return heroi;
+            Heroi heroi = null;
+            try
+            {
+                heroi = new HeroiService().ConsultarHeroi(idHeroi);
+                
+                if (heroi != null)
+                {
+                    return Ok(heroi);
+                }
+                else
+                {
+                    return NotFound();
+                }
+
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(exception.Message);
+            }
         }
 
         // POST api/values

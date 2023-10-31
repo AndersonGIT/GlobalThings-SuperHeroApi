@@ -12,6 +12,7 @@ namespace SuperHeroApi.Models
         public long Id { get; set; }
         public string Nome { get; set; }
         public long IdCategoria { get; set; }
+        public string NomeCategoria { get; set; }
 
         public string ValidarHeroi(RotinaEmExecucao rotinaEmExecucao)
         {
