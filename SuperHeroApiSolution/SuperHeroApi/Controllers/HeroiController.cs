@@ -10,6 +10,7 @@ using System.Web.Http;
 
 namespace SuperHeroApi.Controllers
 {
+    [Authorize]
     public class HeroiController : ApiController
     {
         // GET api/values

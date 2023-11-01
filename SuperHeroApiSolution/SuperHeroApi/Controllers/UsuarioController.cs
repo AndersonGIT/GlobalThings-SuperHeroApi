@@ -19,10 +19,12 @@ using System.Text;
 
 namespace SuperHeroApi.Controllers
 {
+    [Authorize]
     public class UsuarioController : ApiController
     {
         [HttpPost]
         [Route("api/usuario/registrarconta")]
+        [AllowAnonymous]
         public IHttpActionResult RegistrarConta(RegistrarConta registrarConta)
         {
             // Default UserStore constructor uses the default connection string named: DefaultConnection
@@ -48,6 +50,7 @@ namespace SuperHeroApi.Controllers
 
         [HttpPost]
         [Route("api/usuario/conectarconta")]
+        [AllowAnonymous]
         public IHttpActionResult ConectarConta(Usuario usuario)
         {
             try
@@ -83,7 +86,9 @@ namespace SuperHeroApi.Controllers
             }
         }
 
-        protected IHttpActionResult DesconectarConta(object sender, EventArgs e)
+        [HttpPost]
+        [Route("api/usuario/desconectarConta")]
+        protected IHttpActionResult DesconectarConta(Usuario usuario)
         {
             try
             {

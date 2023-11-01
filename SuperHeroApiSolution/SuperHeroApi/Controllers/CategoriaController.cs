@@ -12,6 +12,7 @@ using System.Web.Http;
 
 namespace SuperHeroApi.Controllers
 {
+    [Authorize]
     public class CategoriaController : ApiController
     {
         // GET api/<controller>
