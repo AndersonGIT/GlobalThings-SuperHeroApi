@@ -16,20 +16,11 @@ namespace SuperHeroApi.Controllers
     {
         // GET api/<controller>
         [HttpGet]
-        public IHttpActionResult Get()
+        public IEnumerable<Categoria> Get()
         {
-            try
-            {
-                List<Categoria> categorias = new CategoriaService().ListarCategorias();
-                if (categorias.Count > 0)
-                    return Ok(categorias);
-                else
-                    return NotFound();
-            }
-            catch (Exception ex)
-            {
-                return InternalServerError(ex);
-            }
+            List<Categoria> categorias = new CategoriaService().ListarCategorias();
+
+            return categorias;
         }
 
         // GET api/<controller>/5

@@ -11,12 +11,18 @@ using Microsoft.Owin.Security;
 using System.Web;
 using Swashbuckle.Swagger;
 using System.Web.UI.WebControls;
+using Microsoft.IdentityModel.Tokens;
+using System.Configuration;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace SuperHeroApi.Controllers
 {
     public class UsuarioController : ApiController
     {
         [HttpPost]
+        [Route("api/usuario/registrarconta")]
         public IHttpActionResult RegistrarConta(RegistrarConta registrarConta)
         {
             // Default UserStore constructor uses the default connection string named: DefaultConnection
@@ -32,7 +38,7 @@ namespace SuperHeroApi.Controllers
                 var userIdentity = manager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie);
                 authenticationManager.SignIn(new AuthenticationProperties() { }, userIdentity);
 
-                return Ok("Usuario Registrado e Autenticado com sucesso.");
+                return Ok(new { Mensagem = "Usuario Registrado e Autenticado com sucesso.", Token = GetToken(userIdentity.GetUserId()) });
             }
             else
             {
@@ -41,7 +47,8 @@ namespace SuperHeroApi.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult SignIn(Usuario usuario)
+        [Route("api/usuario/conectarconta")]
+        public IHttpActionResult ConectarConta(Usuario usuario)
         {
             try
             {
@@ -58,11 +65,12 @@ namespace SuperHeroApi.Controllers
 
                     if (userIdentity.IsAuthenticated)
                     {
-                        
+                        return Ok(new {Token = GetToken(userIdentity.GetUserId()) });
                     }
-
-                    //Response.Redirect("~/Login.aspx");
-                    return Ok("Usuario Registrado e Autenticado com sucesso.");
+                    else
+                    {
+                        return BadRequest("Problemas com a autenticação.");
+                    }
                 }
                 else
                 {
@@ -75,7 +83,7 @@ namespace SuperHeroApi.Controllers
             }
         }
 
-        protected IHttpActionResult SignOut(object sender, EventArgs e)
+        protected IHttpActionResult DesconectarConta(object sender, EventArgs e)
         {
             try
             {
@@ -87,6 +95,30 @@ namespace SuperHeroApi.Controllers
             catch (Exception exception) {
                 return InternalServerError(exception);
             }
+        }
+
+        private Object GetToken(string userId)
+        {
+            var key = ConfigurationManager.AppSettings["JwtKey"];
+
+            var issuer = ConfigurationManager.AppSettings["JwtIssuer"];
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            //Create a List of Claims, Keep claims name short    
+            var permClaims = new List<Claim>();
+            permClaims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
+            permClaims.Add(new Claim("userid", "userId"));
+
+            //Create Security Token object by giving required parameters    
+            var token = new JwtSecurityToken(issuer, //Issure    
+                            issuer,  //Audience    
+                            permClaims,
+                            expires: DateTime.Now.AddDays(1),
+                            signingCredentials: credentials);
+            var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
+            return new { data = jwt_token };
         }
     }
 }

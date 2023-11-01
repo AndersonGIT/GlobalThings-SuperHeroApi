@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Owin.Security.OAuth;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -10,6 +11,9 @@ namespace SuperHeroApi
     {
         public static void Register(HttpConfiguration config)
         {
+            config.SuppressDefaultHostAuthentication();
+            config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
+
             // Serviços e configuração da API da Web
             var cors = new EnableCorsAttribute("http://localhost:3000", "*", "*");
             config.EnableCors(cors);

@@ -7,15 +7,19 @@ using System.Web.Http;
 
 namespace SuperHeroApi.Controllers
 {
+    [Authorize]
     public class ValuesController : ApiController
     {
         // GET api/values
+        [Route("api/values/listar")]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
         // GET api/values/5
+        [AllowAnonymous]
+        [Route("api/values/obter/{id}")]
         public string Get(int id)
         {
             return "value";
