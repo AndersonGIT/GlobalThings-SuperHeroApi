@@ -15,6 +15,7 @@ namespace SuperHeroApi.Controllers
     {
         // GET api/values
         [HttpGet]
+        [Route("api/heroi/listarHerois")]
         public IHttpActionResult Get()
         {
             List<Heroi> herois = null;
@@ -38,6 +39,7 @@ namespace SuperHeroApi.Controllers
 
         // GET api/values/5
         [HttpGet]
+        [Route("api/heroi/obterHeroi")]
         public IHttpActionResult Get(long idHeroi)
         {
             Heroi heroi = null;
@@ -63,6 +65,7 @@ namespace SuperHeroApi.Controllers
 
         // POST api/values
         [HttpPost]
+        [Route("api/heroi/inserirHeroi")]
         public IHttpActionResult Post([FromBody] Heroi heroi)
         {
             try
@@ -103,6 +106,7 @@ namespace SuperHeroApi.Controllers
 
         // PUT api/values/5
         [HttpPut]
+        [Route("api/heroi/atualizarHeroi")]
         public IHttpActionResult Put([FromBody] Heroi heroi)
         {
             try
@@ -131,6 +135,8 @@ namespace SuperHeroApi.Controllers
 
         // DELETE api/values/5
         [HttpDelete]
+        [Route("api/heroi/removerHeroi")]
+
         public IHttpActionResult Delete(long idHeroi)
         {
             try

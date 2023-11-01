@@ -17,6 +17,7 @@ namespace SuperHeroApi.Controllers
     {
         // GET api/<controller>
         [HttpGet]
+        [Route("api/categoria/listarCategorias")]
         public IEnumerable<Categoria> Get()
         {
             List<Categoria> categorias = new CategoriaService().ListarCategorias();
@@ -26,6 +27,7 @@ namespace SuperHeroApi.Controllers
 
         // GET api/<controller>/5
         [HttpGet]
+        [Route("api/categoria/obterCategoria")]
         public IHttpActionResult Get(long idCategoria)
         {
             try
@@ -44,6 +46,7 @@ namespace SuperHeroApi.Controllers
 
         // POST api/<controller>
         [HttpPost]
+        [Route("api/categoria/inserirCategoria")]
         public IHttpActionResult Post([FromBody] Categoria categoria)
         {
             try
@@ -84,6 +87,7 @@ namespace SuperHeroApi.Controllers
 
         // PUT api/<controller>/5
         [HttpPut]
+        [Route("api/categoria/atualizarCategoria")]
         public IHttpActionResult Put([FromBody] Categoria categoria)
         {
             try
@@ -112,6 +116,7 @@ namespace SuperHeroApi.Controllers
 
         // DELETE api/<controller>/5
         [HttpDelete]
+        [Route("api/categoria/removerCategoria/")]
         public IHttpActionResult Delete(long idCategoria)
         {
             try
